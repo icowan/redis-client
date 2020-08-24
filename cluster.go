@@ -41,7 +41,7 @@ func (c *cluster) Keys(pattern string) (res []string, err error) {
 }
 
 func (c *cluster) ZAdd(k string, score float64, member interface{}) (err error) {
-	return c.client.ZAdd(c.setPrefix(k), redis.Z{
+	return c.client.ZAdd(c.setPrefix(k), &redis.Z{
 		Score:  score,
 		Member: member,
 	}).Err()
@@ -70,7 +70,7 @@ func (c *cluster) Incr(key string, exp time.Duration) error {
 	return c.client.Incr(c.setPrefix(key)).Err()
 }
 
-func NewRedisCluster(hosts []string, password, prefix string) RedisInterface {
+func NewRedisCluster(hosts []string, password, prefix string) RedisClient {
 	return &cluster{client: redis.NewClusterClient(&redis.ClusterOptions{
 		Addrs:    hosts,
 		Password: password,
