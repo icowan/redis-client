@@ -41,7 +41,7 @@ func (c *cluster) Keys(pattern string) (res []string, err error) {
 }
 
 func (c *cluster) ZAdd(k string, score float64, member interface{}) (err error) {
-	return c.client.ZAdd(c.setPrefix(k), &redis.Z{
+	return c.client.ZAdd(c.setPrefix(k), redis.Z{
 		Score:  score,
 		Member: member,
 	}).Err()

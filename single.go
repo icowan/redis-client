@@ -40,7 +40,7 @@ func (c *single) Keys(pattern string) (res []string, err error) {
 }
 
 func (c *single) ZAdd(k string, score float64, member interface{}) (err error) {
-	return c.client.ZAdd(c.setPrefix(k), &redis.Z{
+	return c.client.ZAdd(c.setPrefix(k), redis.Z{
 		Score:  score,
 		Member: member,
 	}).Err()
