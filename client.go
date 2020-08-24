@@ -5,7 +5,7 @@
  * @Software: GoLand
  */
 
-package redis
+package redisclient
 
 import (
 	"strings"
@@ -14,7 +14,7 @@ import (
 	"github.com/go-redis/redis"
 )
 
-type RedisInterface interface {
+type RedisClient interface {
 	Set(k string, v interface{}, expir ...time.Duration) (err error)
 	Get(k string) (v string, err error)
 	Del(k string) (err error)
@@ -37,7 +37,7 @@ type RedisInterface interface {
 	Subscribe(channels ...string) *redis.PubSub
 	Publish(channel string, message interface{}) error
 	Incr(key string, exp time.Duration) error
-	SetPrefix(prefix string) RedisInterface
+	SetPrefix(prefix string) RedisClient
 	TTL(key string) time.Duration
 }
 
@@ -47,20 +47,20 @@ const (
 	expiration   = 600 * time.Second
 )
 
-func NewRedisClient(hosts, password, prefix string, db int) (RedisInterface, error) {
+func NewRedisClient(hosts, password, prefix string, db int) RedisClient {
 	h := strings.Split(hosts, ",")
 	if len(h) > 1 {
 		return NewRedisCluster(
 			h,
 			password,
 			prefix,
-		), nil
+		)
 	}
 	return NewRedisSingle(
 		hosts,
 		password,
 		prefix,
 		db,
-	), nil
+	)
 
 }

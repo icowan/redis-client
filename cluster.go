@@ -5,7 +5,7 @@
  * @Software: GoLand
  */
 
-package redis
+package redisclient
 
 import (
 	"encoding/json"
@@ -155,7 +155,7 @@ func (c *cluster) Publish(channel string, message interface{}) error {
 	return c.client.Publish(channel, message).Err()
 }
 
-func (c *cluster) SetPrefix(prefix string) RedisInterface {
+func (c *cluster) SetPrefix(prefix string) RedisClient {
 	c.prefix = prefix
 	return c
 }

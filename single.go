@@ -5,7 +5,7 @@
  * @Software: GoLand
  */
 
-package redis
+package redisclient
 
 import (
 	"encoding/json"
@@ -40,7 +40,7 @@ func (c *single) Keys(pattern string) (res []string, err error) {
 }
 
 func (c *single) ZAdd(k string, score float64, member interface{}) (err error) {
-	return c.client.ZAdd(c.setPrefix(k), redis.Z{
+	return c.client.ZAdd(c.setPrefix(k), &redis.Z{
 		Score:  score,
 		Member: member,
 	}).Err()
@@ -70,7 +70,7 @@ func (c *single) TTL(key string) time.Duration {
 	return c.client.TTL(key).Val()
 }
 
-func NewRedisSingle(host, password, prefix string, db int) RedisInterface {
+func NewRedisSingle(host, password, prefix string, db int) RedisClient {
 	client := redis.NewClient(&redis.Options{
 		Addr:     host,
 		Password: password, // no password set
@@ -157,7 +157,7 @@ func (c *single) Incr(key string, expiration time.Duration) error {
 	return c.client.Incr(c.setPrefix(key)).Err()
 }
 
-func (c *single) SetPrefix(prefix string) RedisInterface {
+func (c *single) SetPrefix(prefix string) RedisClient {
 	c.prefix = prefix
 	return c
 }
