@@ -19,6 +19,10 @@ type single struct {
 	prefix string
 }
 
+func (c *single) Ping() error {
+	return c.client.Ping().Err()
+}
+
 func (c *single) LPush(key string, val interface{}) (err error) {
 	return c.client.LPush(key, val).Err()
 }

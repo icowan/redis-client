@@ -20,6 +20,10 @@ type cluster struct {
 	prefix string
 }
 
+func (c *cluster) Ping() error {
+	return c.client.Ping().Err()
+}
+
 func (c *cluster) LPush(key string, val interface{}) (err error) {
 	return c.client.LPush(key, val).Err()
 }

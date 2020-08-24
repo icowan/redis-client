@@ -13,7 +13,10 @@ import (
 )
 
 func TestNewRedisClient(t *testing.T) {
-	rds := NewRedisClient("127.0.0.1:6379", "admin", "", 1)
+	rds, err := NewRedisClient("127.0.0.1:6379", "admin", "", 1)
+	if err != nil {
+		t.Error(err)
+	}
 	defer func() {
 		_ = rds.Close()
 	}()
@@ -28,7 +31,10 @@ func TestNewRedisClient(t *testing.T) {
 }
 
 func TestNewRedisCluster(t *testing.T) {
-	rds := NewRedisClient("127.0.0.1:6379,127.0.0.1:7379,127.0.0.1:8379", "admin", "", 0)
+	rds, err := NewRedisClient("127.0.0.1:6379,127.0.0.1:7379,127.0.0.1:8379", "admin", "", 0)
+	if err != nil {
+		t.Error(err)
+	}
 	defer func() {
 		_ = rds.Close()
 	}()

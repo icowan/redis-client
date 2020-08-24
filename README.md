@@ -9,7 +9,10 @@ go get github.com/icowan/redis-client
 ## 单点Redis
 
 ```golang
-rds := NewRedisClient("127.0.0.1:6379", "admin", "", 1)
+rds, err := NewRedisClient("127.0.0.1:6379", "admin", "", 1)
+if err != nil {
+    log.Fatal(err)
+}
 defer func() {
     _ = rds.Close()
 }()
@@ -26,7 +29,10 @@ log.Print(v)
 ## 集群Redis
 
 ```golang
-rds := NewRedisClient("127.0.0.1:6379,127.0.0.1:7379,127.0.0.1:8379", "admin", "", 1)
+rds, err := NewRedisClient("127.0.0.1:6379,127.0.0.1:7379,127.0.0.1:8379", "admin", "", 1)
+if err != nil {
+    log.Fatal(err)
+}
 defer func() {
     _ = rds.Close()
 }()

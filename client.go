@@ -39,6 +39,7 @@ type RedisClient interface {
 	Incr(key string, exp time.Duration) error
 	SetPrefix(prefix string) RedisClient
 	TTL(key string) time.Duration
+	Ping() error
 }
 
 const (
@@ -47,20 +48,25 @@ const (
 	expiration   = 600 * time.Second
 )
 
-func NewRedisClient(hosts, password, prefix string, db int) RedisClient {
+func NewRedisClient(hosts, password, prefix string, db int) (rds RedisClient, err error) {
 	h := strings.Split(hosts, ",")
 	if len(h) > 1 {
-		return NewRedisCluster(
+		rds = NewRedisCluster(
 			h,
 			password,
 			prefix,
 		)
+	} else {
+		rds = NewRedisSingle(
+			hosts,
+			password,
+			prefix,
+			db,
+		)
 	}
-	return NewRedisSingle(
-		hosts,
-		password,
-		prefix,
-		db,
-	)
 
+	if err = rds.Ping(); err != nil {
+		return nil, err
+	}
+	return rds, nil
 }
