@@ -8,6 +8,7 @@
 package redisclient
 
 import (
+	"context"
 	"strings"
 	"time"
 
@@ -15,31 +16,31 @@ import (
 )
 
 type RedisClient interface {
-	Set(k string, v interface{}, expir ...time.Duration) (err error)
-	Get(k string) (v string, err error)
-	Del(k string) (err error)
-	Exists(keys ...string) int64
-	HSet(k string, field string, v interface{}) (err error)
-	HGet(k string, field string) (res string, err error)
-	HGetAll(k string) (res map[string]string, err error)
-	HLen(k string) (res int64, err error)
-	ZCard(k string) (res int64, err error)
-	ZRangeWithScores(k string, start, stop int64) (res []redis.Z, err error)
-	ZAdd(k string, score float64, member interface{}) (err error)
-	HDelAll(k string) (err error)
-	HDel(k string, field string) (err error)
-	Keys(pattern string) (res []string, err error)
-	LLen(key string) int64
-	RPop(key string) (res string, err error)
-	LPush(key string, val interface{}) (err error)
-	TypeOf(key string) (res string, err error)
-	Close() error
-	Subscribe(channels ...string) *redis.PubSub
-	Publish(channel string, message interface{}) error
-	Incr(key string, exp time.Duration) error
-	SetPrefix(prefix string) RedisClient
-	TTL(key string) time.Duration
-	Ping() error
+	Set(ctx context.Context, k string, v interface{}, expir ...time.Duration) (err error)
+	Get(ctx context.Context, k string) (v string, err error)
+	Del(ctx context.Context, k string) (err error)
+	Exists(ctx context.Context, keys ...string) int64
+	HSet(ctx context.Context, k string, field string, v interface{}) (err error)
+	HGet(ctx context.Context, k string, field string) (res string, err error)
+	HGetAll(ctx context.Context, k string) (res map[string]string, err error)
+	HLen(ctx context.Context, k string) (res int64, err error)
+	ZCard(ctx context.Context, k string) (res int64, err error)
+	ZRangeWithScores(ctx context.Context, k string, start, stop int64) (res []redis.Z, err error)
+	ZAdd(ctx context.Context, k string, score float64, member interface{}) (err error)
+	HDelAll(ctx context.Context, k string) (err error)
+	HDel(ctx context.Context, k string, field string) (err error)
+	Keys(ctx context.Context, pattern string) (res []string, err error)
+	LLen(ctx context.Context, key string) int64
+	RPop(ctx context.Context, key string) (res string, err error)
+	LPush(ctx context.Context, key string, val interface{}) (err error)
+	TypeOf(ctx context.Context, key string) (res string, err error)
+	Close(ctx context.Context) error
+	Subscribe(ctx context.Context, channels ...string) *redis.PubSub
+	Publish(ctx context.Context, channel string, message interface{}) error
+	Incr(ctx context.Context, key string, exp time.Duration) error
+	SetPrefix(ctx context.Context, prefix string) RedisClient
+	TTL(ctx context.Context, key string) time.Duration
+	Ping(ctx context.Context) error
 }
 
 const (
@@ -65,7 +66,7 @@ func NewRedisClient(hosts, password, prefix string, db int) (rds RedisClient, er
 		)
 	}
 
-	if err = rds.Ping(); err != nil {
+	if err = rds.Ping(context.Background()); err != nil {
 		return nil, err
 	}
 	return rds, nil

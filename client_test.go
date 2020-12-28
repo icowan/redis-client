@@ -8,8 +8,13 @@
 package redisclient
 
 import (
+	"context"
 	"testing"
 	"time"
+)
+
+var (
+	ctx context.Context
 )
 
 func TestNewRedisClient(t *testing.T) {
@@ -18,11 +23,11 @@ func TestNewRedisClient(t *testing.T) {
 		t.Error(err)
 	}
 	defer func() {
-		_ = rds.Close()
+		_ = rds.Close(ctx)
 	}()
 
-	_ = rds.Set("hello", "world", time.Second*10)
-	v, err := rds.Get("hello")
+	_ = rds.Set(ctx, "hello", "world", time.Second*10)
+	v, err := rds.Get(ctx, "hello")
 	if err != nil {
 		t.Error(err)
 	}
@@ -36,11 +41,11 @@ func TestNewRedisCluster(t *testing.T) {
 		t.Error(err)
 	}
 	defer func() {
-		_ = rds.Close()
+		_ = rds.Close(ctx)
 	}()
 
-	_ = rds.Set("hello", "world", time.Second*10)
-	v, err := rds.Get("hello")
+	_ = rds.Set(ctx, "hello", "world", time.Second*10)
+	v, err := rds.Get(ctx, "hello")
 	if err != nil {
 		t.Error(err)
 	}
