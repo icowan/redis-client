@@ -36,7 +36,8 @@ func TestNewRedisClient(t *testing.T) {
 }
 
 func TestNewRedisCluster(t *testing.T) {
-	rds, err := NewRedisClient("127.0.0.1:6379,127.0.0.1:7379,127.0.0.1:8379", "admin", "", 0)
+	ctx = context.Background()
+	rds, err := NewRedisClient("localhost:32769", "", "", 0)
 	if err != nil {
 		t.Error(err)
 	}
