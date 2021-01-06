@@ -9,6 +9,7 @@ package redisclient
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
 )
@@ -37,7 +38,7 @@ func TestNewRedisClient(t *testing.T) {
 
 func TestNewRedisCluster(t *testing.T) {
 	ctx = context.Background()
-	rds, err := NewRedisClient("localhost:30738", "admin", "", 0)
+	rds, err := NewRedisClient("10.143.228.248:30738", "admin", "test", 3)
 	if err != nil {
 		t.Error(err)
 	}
@@ -50,6 +51,15 @@ func TestNewRedisCluster(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
+	if err = rds.ZAdd(ctx, "hello", 100, "world"); err != nil {
+		t.Error(err)
+	}
+	rank, err := rds.ZRank(ctx, "hello", "world")
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println(rank)
 
 	t.Log(v)
 }

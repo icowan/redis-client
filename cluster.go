@@ -62,15 +62,15 @@ func (c *cluster) Unlink(ctx context.Context, keys ...string) int64 {
 }
 
 func (c *cluster) Dump(ctx context.Context, key string) string {
-	return c.client.Dump(c.setPrefix(c.setPrefix(key))).Val()
+	return c.client.Dump(c.setPrefix(key)).Val()
 }
 
 func (c *cluster) Expire(ctx context.Context, key string, expiration time.Duration) bool {
-	return c.client.Expire(c.setPrefix(c.setPrefix(key)), expiration).Val()
+	return c.client.Expire(c.setPrefix(key), expiration).Val()
 }
 
 func (c *cluster) ExpireAt(ctx context.Context, key string, tm time.Time) bool {
-	return c.client.ExpireAt(c.setPrefix(c.setPrefix(key)), tm).Val()
+	return c.client.ExpireAt(c.setPrefix(key), tm).Val()
 }
 
 func (c *cluster) Migrate(ctx context.Context, host, port, key string, db int64, timeout time.Duration) error {
@@ -78,35 +78,35 @@ func (c *cluster) Migrate(ctx context.Context, host, port, key string, db int64,
 }
 
 func (c *cluster) Move(ctx context.Context, key string, db int64) bool {
-	return c.client.Move(c.setPrefix(c.setPrefix(key)), db).Val()
+	return c.client.Move(c.setPrefix(key), db).Val()
 }
 
 func (c *cluster) ObjectRefCount(ctx context.Context, key string) int64 {
-	return c.client.ObjectRefCount(c.setPrefix(c.setPrefix(key))).Val()
+	return c.client.ObjectRefCount(c.setPrefix(key)).Val()
 }
 
 func (c *cluster) ObjectEncoding(ctx context.Context, key string) string {
-	return c.client.ObjectEncoding(c.setPrefix(c.setPrefix(key))).Val()
+	return c.client.ObjectEncoding(c.setPrefix(key)).Val()
 }
 
 func (c *cluster) ObjectIdleTime(ctx context.Context, key string) time.Duration {
-	return c.client.ObjectIdleTime(c.setPrefix(c.setPrefix(key))).Val()
+	return c.client.ObjectIdleTime(c.setPrefix(key)).Val()
 }
 
 func (c *cluster) Persist(ctx context.Context, key string) bool {
-	return c.client.Persist(c.setPrefix(c.setPrefix(key))).Val()
+	return c.client.Persist(c.setPrefix(key)).Val()
 }
 
 func (c *cluster) PExpire(ctx context.Context, key string, expiration time.Duration) bool {
-	return c.client.PExpire(c.setPrefix(c.setPrefix(key)), expiration).Val()
+	return c.client.PExpire(c.setPrefix(key), expiration).Val()
 }
 
 func (c *cluster) PExpireAt(ctx context.Context, key string, tm time.Time) bool {
-	return c.client.PExpireAt(c.setPrefix(c.setPrefix(key)), tm).Val()
+	return c.client.PExpireAt(c.setPrefix(key), tm).Val()
 }
 
 func (c *cluster) PTTL(ctx context.Context, key string) time.Duration {
-	return c.client.PTTL(c.setPrefix(c.setPrefix(key))).Val()
+	return c.client.PTTL(c.setPrefix(key)).Val()
 }
 
 func (c *cluster) RandomKey(ctx context.Context) string {
@@ -114,19 +114,19 @@ func (c *cluster) RandomKey(ctx context.Context) string {
 }
 
 func (c *cluster) Rename(ctx context.Context, key, newkey string) *redis.StatusCmd {
-	return c.client.Rename(c.setPrefix(c.setPrefix(key)), newkey)
+	return c.client.Rename(c.setPrefix(key), newkey)
 }
 
 func (c *cluster) RenameNX(ctx context.Context, key, newkey string) bool {
-	return c.client.RenameNX(c.setPrefix(c.setPrefix(key)), newkey).Val()
+	return c.client.RenameNX(c.setPrefix(key), newkey).Val()
 }
 
 func (c *cluster) Restore(ctx context.Context, key string, ttl time.Duration, value string) error {
-	return c.client.Restore(c.setPrefix(c.setPrefix(key)), ttl, value).Err()
+	return c.client.Restore(c.setPrefix(key), ttl, value).Err()
 }
 
 func (c *cluster) RestoreReplace(ctx context.Context, key string, ttl time.Duration, value string) error {
-	return c.client.RestoreReplace(c.setPrefix(c.setPrefix(key)), ttl, value).Err()
+	return c.client.RestoreReplace(c.setPrefix(key), ttl, value).Err()
 }
 
 func (c *cluster) Sort(ctx context.Context, key string, sort *redis.Sort) []string {
@@ -586,51 +586,51 @@ func (c *cluster) ZRangeByScoreWithScores(ctx context.Context, key string, opt r
 }
 
 func (c *cluster) ZRank(ctx context.Context, key, member string) (int64, error) {
-	return c.client.ZRank(c.setPrefix(c.setPrefix(key)), member).Result()
+	return c.client.ZRank(c.setPrefix(key), member).Result()
 }
 
 func (c *cluster) ZRem(ctx context.Context, key string, members ...interface{}) int64 {
-	return c.client.ZRem(c.setPrefix(c.setPrefix(key)), members...).Val()
+	return c.client.ZRem(c.setPrefix(key), members...).Val()
 }
 
 func (c *cluster) ZRemRangeByRank(ctx context.Context, key string, start, stop int64) (int64, error) {
-	return c.client.ZRemRangeByRank(c.setPrefix(c.setPrefix(key)), start, stop).Result()
+	return c.client.ZRemRangeByRank(c.setPrefix(key), start, stop).Result()
 }
 
 func (c *cluster) ZRemRangeByScore(ctx context.Context, key, min, max string) int64 {
-	return c.client.ZRemRangeByScore(c.setPrefix(c.setPrefix(key)), min, max).Val()
+	return c.client.ZRemRangeByScore(c.setPrefix(key), min, max).Val()
 }
 
 func (c *cluster) ZRemRangeByLex(ctx context.Context, key, min, max string) int64 {
-	return c.client.ZRemRangeByLex(c.setPrefix(c.setPrefix(key)), min, max).Val()
+	return c.client.ZRemRangeByLex(c.setPrefix(key), min, max).Val()
 }
 
 func (c *cluster) ZRevRange(ctx context.Context, key string, start, stop int64) []string {
-	return c.client.ZRevRange(c.setPrefix(c.setPrefix(key)), start, stop).Val()
+	return c.client.ZRevRange(c.setPrefix(key), start, stop).Val()
 }
 
 func (c *cluster) ZRevRangeWithScores(ctx context.Context, key string, start, stop int64) []redis.Z {
-	return c.client.ZRevRangeWithScores(c.setPrefix(c.setPrefix(key)), start, stop).Val()
+	return c.client.ZRevRangeWithScores(c.setPrefix(key), start, stop).Val()
 }
 
 func (c *cluster) ZRevRangeByScore(ctx context.Context, key string, opt redis.ZRangeBy) []string {
-	return c.client.ZRevRangeByScore(c.setPrefix(c.setPrefix(key)), opt).Val()
+	return c.client.ZRevRangeByScore(c.setPrefix(key), opt).Val()
 }
 
 func (c *cluster) ZRevRangeByLex(ctx context.Context, key string, opt redis.ZRangeBy) []string {
-	return c.client.ZRevRangeByLex(c.setPrefix(c.setPrefix(key)), opt).Val()
+	return c.client.ZRevRangeByLex(c.setPrefix(key), opt).Val()
 }
 
 func (c *cluster) ZRevRangeByScoreWithScores(ctx context.Context, key string, opt redis.ZRangeBy) []redis.Z {
-	return c.client.ZRevRangeByScoreWithScores(c.setPrefix(c.setPrefix(key)), opt).Val()
+	return c.client.ZRevRangeByScoreWithScores(c.setPrefix(key), opt).Val()
 }
 
 func (c *cluster) ZRevRank(ctx context.Context, key, member string) (int64, error) {
-	return c.client.ZRevRank(c.setPrefix(c.setPrefix(key)), member).Result()
+	return c.client.ZRevRank(c.setPrefix(key), member).Result()
 }
 
 func (c *cluster) ZScore(ctx context.Context, key, member string) float64 {
-	return c.client.ZScore(c.setPrefix(c.setPrefix(key)), member).Val()
+	return c.client.ZScore(c.setPrefix(key), member).Val()
 }
 
 func (c *cluster) ZUnionStore(ctx context.Context, dest string, store redis.ZStore, keys ...string) int64 {
@@ -638,7 +638,7 @@ func (c *cluster) ZUnionStore(ctx context.Context, dest string, store redis.ZSto
 }
 
 func (c *cluster) PFAdd(ctx context.Context, key string, els ...interface{}) int64 {
-	return c.client.PFAdd(c.setPrefix(c.setPrefix(key)), els...).Val()
+	return c.client.PFAdd(c.setPrefix(key), els...).Val()
 }
 
 func (c *cluster) PFCount(ctx context.Context, keys ...string) int64 {
@@ -770,7 +770,7 @@ func (c *cluster) ScriptLoad(ctx context.Context, script string) string {
 }
 
 func (c *cluster) DebugObject(ctx context.Context, key string) string {
-	return c.client.DebugObject(c.setPrefix(c.setPrefix(key))).Val()
+	return c.client.DebugObject(c.setPrefix(key)).Val()
 }
 
 func (c *cluster) PubSubChannels(ctx context.Context, pattern string) []string {
