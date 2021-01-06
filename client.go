@@ -183,9 +183,9 @@ type RedisClient interface {
 	ZRangeByScore(ctx context.Context, key string, opt redis.ZRangeBy) []string
 	ZRangeByLex(ctx context.Context, key string, opt redis.ZRangeBy) []string
 	ZRangeByScoreWithScores(ctx context.Context, key string, opt redis.ZRangeBy) []redis.Z
-	ZRank(ctx context.Context, key, member string) int64
+	ZRank(ctx context.Context, key, member string) (int64, error)
 	ZRem(ctx context.Context, key string, members ...interface{}) int64
-	ZRemRangeByRank(ctx context.Context, key string, start, stop int64) int64
+	ZRemRangeByRank(ctx context.Context, key string, start, stop int64) (int64, error)
 	ZRemRangeByScore(ctx context.Context, key, min, max string) int64
 	ZRemRangeByLex(ctx context.Context, key, min, max string) int64
 	ZRevRange(ctx context.Context, key string, start, stop int64) []string
@@ -193,7 +193,7 @@ type RedisClient interface {
 	ZRevRangeByScore(ctx context.Context, key string, opt redis.ZRangeBy) []string
 	ZRevRangeByLex(ctx context.Context, key string, opt redis.ZRangeBy) []string
 	ZRevRangeByScoreWithScores(ctx context.Context, key string, opt redis.ZRangeBy) []redis.Z
-	ZRevRank(ctx context.Context, key, member string) int64
+	ZRevRank(ctx context.Context, key, member string) (int64, error)
 	ZScore(ctx context.Context, key, member string) float64
 	ZUnionStore(ctx context.Context, dest string, store redis.ZStore, keys ...string) int64
 	PFAdd(ctx context.Context, key string, els ...interface{}) int64

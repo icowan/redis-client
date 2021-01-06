@@ -581,16 +581,16 @@ func (c *cluster) ZRangeByScoreWithScores(ctx context.Context, key string, opt r
 	return c.client.ZRangeByScoreWithScores(key, opt).Val()
 }
 
-func (c *cluster) ZRank(ctx context.Context, key, member string) int64 {
-	return c.client.ZRank(key, member).Val()
+func (c *cluster) ZRank(ctx context.Context, key, member string) (int64, error) {
+	return c.client.ZRank(key, member).Result()
 }
 
 func (c *cluster) ZRem(ctx context.Context, key string, members ...interface{}) int64 {
 	return c.client.ZRem(key, members...).Val()
 }
 
-func (c *cluster) ZRemRangeByRank(ctx context.Context, key string, start, stop int64) int64 {
-	return c.client.ZRemRangeByRank(key, start, stop).Val()
+func (c *cluster) ZRemRangeByRank(ctx context.Context, key string, start, stop int64) (int64, error) {
+	return c.client.ZRemRangeByRank(key, start, stop).Result()
 }
 
 func (c *cluster) ZRemRangeByScore(ctx context.Context, key, min, max string) int64 {
@@ -621,8 +621,8 @@ func (c *cluster) ZRevRangeByScoreWithScores(ctx context.Context, key string, op
 	return c.client.ZRevRangeByScoreWithScores(key, opt).Val()
 }
 
-func (c *cluster) ZRevRank(ctx context.Context, key, member string) int64 {
-	return c.client.ZRevRank(key, member).Val()
+func (c *cluster) ZRevRank(ctx context.Context, key, member string) (int64, error) {
+	return c.client.ZRevRank(key, member).Result()
 }
 
 func (c *cluster) ZScore(ctx context.Context, key, member string) float64 {
