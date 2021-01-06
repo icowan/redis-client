@@ -57,15 +57,15 @@ func (c *single) Unlink(ctx context.Context, keys ...string) int64 {
 }
 
 func (c *single) Dump(ctx context.Context, key string) string {
-	return c.client.Dump(key).Val()
+	return c.client.Dump(c.setPrefix(c.setPrefix(key))).Val()
 }
 
 func (c *single) Expire(ctx context.Context, key string, expiration time.Duration) bool {
-	return c.client.Expire(key, expiration).Val()
+	return c.client.Expire(c.setPrefix(c.setPrefix(key)), expiration).Val()
 }
 
 func (c *single) ExpireAt(ctx context.Context, key string, tm time.Time) bool {
-	return c.client.ExpireAt(key, tm).Val()
+	return c.client.ExpireAt(c.setPrefix(c.setPrefix(key)), tm).Val()
 }
 
 func (c *single) Migrate(ctx context.Context, host, port, key string, db int64, timeout time.Duration) error {
@@ -73,35 +73,35 @@ func (c *single) Migrate(ctx context.Context, host, port, key string, db int64, 
 }
 
 func (c *single) Move(ctx context.Context, key string, db int64) bool {
-	return c.client.Move(key, db).Val()
+	return c.client.Move(c.setPrefix(c.setPrefix(key)), db).Val()
 }
 
 func (c *single) ObjectRefCount(ctx context.Context, key string) int64 {
-	return c.client.ObjectRefCount(key).Val()
+	return c.client.ObjectRefCount(c.setPrefix(c.setPrefix(key))).Val()
 }
 
 func (c *single) ObjectEncoding(ctx context.Context, key string) string {
-	return c.client.ObjectEncoding(key).Val()
+	return c.client.ObjectEncoding(c.setPrefix(c.setPrefix(key))).Val()
 }
 
 func (c *single) ObjectIdleTime(ctx context.Context, key string) time.Duration {
-	return c.client.ObjectIdleTime(key).Val()
+	return c.client.ObjectIdleTime(c.setPrefix(c.setPrefix(key))).Val()
 }
 
 func (c *single) Persist(ctx context.Context, key string) bool {
-	return c.client.Persist(key).Val()
+	return c.client.Persist(c.setPrefix(c.setPrefix(key))).Val()
 }
 
 func (c *single) PExpire(ctx context.Context, key string, expiration time.Duration) bool {
-	return c.client.PExpire(key, expiration).Val()
+	return c.client.PExpire(c.setPrefix(c.setPrefix(key)), expiration).Val()
 }
 
 func (c *single) PExpireAt(ctx context.Context, key string, tm time.Time) bool {
-	return c.client.PExpireAt(key, tm).Val()
+	return c.client.PExpireAt(c.setPrefix(c.setPrefix(key)), tm).Val()
 }
 
 func (c *single) PTTL(ctx context.Context, key string) time.Duration {
-	return c.client.PTTL(key).Val()
+	return c.client.PTTL(c.setPrefix(c.setPrefix(key))).Val()
 }
 
 func (c *single) RandomKey(ctx context.Context) string {
@@ -109,31 +109,31 @@ func (c *single) RandomKey(ctx context.Context) string {
 }
 
 func (c *single) Rename(ctx context.Context, key, newkey string) *redis.StatusCmd {
-	return c.client.Rename(key, newkey)
+	return c.client.Rename(c.setPrefix(c.setPrefix(key)), newkey)
 }
 
 func (c *single) RenameNX(ctx context.Context, key, newkey string) bool {
-	return c.client.RenameNX(key, newkey).Val()
+	return c.client.RenameNX(c.setPrefix(c.setPrefix(key)), newkey).Val()
 }
 
 func (c *single) Restore(ctx context.Context, key string, ttl time.Duration, value string) error {
-	return c.client.Restore(key, ttl, value).Err()
+	return c.client.Restore(c.setPrefix(c.setPrefix(key)), ttl, value).Err()
 }
 
 func (c *single) RestoreReplace(ctx context.Context, key string, ttl time.Duration, value string) error {
-	return c.client.RestoreReplace(key, ttl, value).Err()
+	return c.client.RestoreReplace(c.setPrefix(c.setPrefix(key)), ttl, value).Err()
 }
 
 func (c *single) Sort(ctx context.Context, key string, sort *redis.Sort) []string {
-	return c.client.Sort(key, sort).Val()
+	return c.client.Sort(c.setPrefix(key), sort).Val()
 }
 
 func (c *single) SortStore(ctx context.Context, key, store string, sort *redis.Sort) int64 {
-	return c.client.SortStore(key, store, sort).Val()
+	return c.client.SortStore(c.setPrefix(key), store, sort).Val()
 }
 
 func (c *single) SortInterfaces(ctx context.Context, key string, sort *redis.Sort) []interface{} {
-	return c.client.SortInterfaces(key, sort).Val()
+	return c.client.SortInterfaces(c.setPrefix(key), sort).Val()
 }
 
 func (c *single) Touch(ctx context.Context, keys ...string) int64 {
@@ -141,7 +141,7 @@ func (c *single) Touch(ctx context.Context, keys ...string) int64 {
 }
 
 func (c *single) Type(ctx context.Context, key string) string {
-	return c.client.Type(key).Val()
+	return c.client.Type(c.setPrefix(key)).Val()
 }
 
 func (c *single) Scan(ctx context.Context, cursor uint64, match string, count int64) ([]string, uint64) {
@@ -149,23 +149,23 @@ func (c *single) Scan(ctx context.Context, cursor uint64, match string, count in
 }
 
 func (c *single) SScan(ctx context.Context, key string, cursor uint64, match string, count int64) ([]string, uint64) {
-	return c.client.SScan(key, cursor, match, count).Val()
+	return c.client.SScan(c.setPrefix(key), cursor, match, count).Val()
 }
 
 func (c *single) HScan(ctx context.Context, key string, cursor uint64, match string, count int64) ([]string, uint64) {
-	return c.client.HScan(key, cursor, match, count).Val()
+	return c.client.HScan(c.setPrefix(key), cursor, match, count).Val()
 }
 
 func (c *single) ZScan(ctx context.Context, key string, cursor uint64, match string, count int64) ([]string, uint64) {
-	return c.client.ZScan(key, cursor, match, count).Val()
+	return c.client.ZScan(c.setPrefix(key), cursor, match, count).Val()
 }
 
 func (c *single) Append(ctx context.Context, key, value string) int64 {
-	return c.client.Append(key, value).Val()
+	return c.client.Append(c.setPrefix(key), value).Val()
 }
 
 func (c *single) BitCount(ctx context.Context, key string, bitCount *redis.BitCount) int64 {
-	return c.client.BitCount(key, bitCount).Val()
+	return c.client.BitCount(c.setPrefix(key), bitCount).Val()
 }
 
 func (c *single) BitOpAnd(ctx context.Context, destKey string, keys ...string) int64 {
@@ -185,35 +185,35 @@ func (c *single) BitOpNot(ctx context.Context, destKey string, key string) int64
 }
 
 func (c *single) BitPos(ctx context.Context, key string, bit int64, pos ...int64) int64 {
-	return c.client.BitPos(key, bit, pos...).Val()
+	return c.client.BitPos(c.setPrefix(key), bit, pos...).Val()
 }
 
 func (c *single) Decr(ctx context.Context, key string) int64 {
-	return c.client.Decr(key).Val()
+	return c.client.Decr(c.setPrefix(key)).Val()
 }
 
 func (c *single) DecrBy(ctx context.Context, key string, decrement int64) int64 {
-	return c.client.DecrBy(key, decrement).Val()
+	return c.client.DecrBy(c.setPrefix(key), decrement).Val()
 }
 
 func (c *single) GetBit(ctx context.Context, key string, offset int64) int64 {
-	return c.client.GetBit(key, offset).Val()
+	return c.client.GetBit(c.setPrefix(key), offset).Val()
 }
 
 func (c *single) GetRange(ctx context.Context, key string, start, end int64) string {
-	return c.client.GetRange(key, start, end).Val()
+	return c.client.GetRange(c.setPrefix(key), start, end).Val()
 }
 
 func (c *single) GetSet(ctx context.Context, key string, value interface{}) string {
-	return c.client.GetSet(key, value).Val()
+	return c.client.GetSet(c.setPrefix(key), value).Val()
 }
 
 func (c *single) IncrBy(ctx context.Context, key string, value int64) int64 {
-	return c.client.IncrBy(key, value).Val()
+	return c.client.IncrBy(c.setPrefix(key), value).Val()
 }
 
 func (c *single) IncrByFloat(ctx context.Context, key string, value float64) float64 {
-	return c.client.IncrByFloat(key, value).Val()
+	return c.client.IncrByFloat(c.setPrefix(key), value).Val()
 }
 
 func (c *single) MGet(ctx context.Context, keys ...string) []interface{} {
@@ -229,55 +229,55 @@ func (c *single) MSetNX(ctx context.Context, pairs ...interface{}) bool {
 }
 
 func (c *single) SetBit(ctx context.Context, key string, offset int64, value int) int64 {
-	return c.client.SetBit(key, offset, value).Val()
+	return c.client.SetBit(c.setPrefix(key), offset, value).Val()
 }
 
 func (c *single) SetNX(ctx context.Context, key string, value interface{}, expiration time.Duration) bool {
-	return c.client.SetNX(key, value, expiration).Val()
+	return c.client.SetNX(c.setPrefix(key), value, expiration).Val()
 }
 
 func (c *single) SetXX(ctx context.Context, key string, value interface{}, expiration time.Duration) bool {
-	return c.client.SetXX(key, value, expiration).Val()
+	return c.client.SetXX(c.setPrefix(key), value, expiration).Val()
 }
 
 func (c *single) SetRange(ctx context.Context, key string, offset int64, value string) int64 {
-	return c.client.SetRange(key, offset, value).Val()
+	return c.client.SetRange(c.setPrefix(key), offset, value).Val()
 }
 
 func (c *single) StrLen(ctx context.Context, key string) int64 {
-	return c.client.StrLen(key).Val()
+	return c.client.StrLen(c.setPrefix(key)).Val()
 }
 
 func (c *single) HExists(ctx context.Context, key, field string) bool {
-	return c.client.HExists(key, field).Val()
+	return c.client.HExists(c.setPrefix(key), field).Val()
 }
 
 func (c *single) HIncrBy(ctx context.Context, key, field string, incr int64) int64 {
-	return c.client.HIncrBy(key, field, incr).Val()
+	return c.client.HIncrBy(c.setPrefix(key), field, incr).Val()
 }
 
 func (c *single) HIncrByFloat(ctx context.Context, key, field string, incr float64) float64 {
-	return c.client.HIncrByFloat(key, field, incr).Val()
+	return c.client.HIncrByFloat(c.setPrefix(key), field, incr).Val()
 }
 
 func (c *single) HKeys(ctx context.Context, key string) []string {
-	return c.client.HKeys(key).Val()
+	return c.client.HKeys(c.setPrefix(key)).Val()
 }
 
 func (c *single) HMGet(ctx context.Context, key string, fields ...string) []interface{} {
-	return c.client.HMGet(key, fields...).Val()
+	return c.client.HMGet(c.setPrefix(key), fields...).Val()
 }
 
 func (c *single) HMSet(ctx context.Context, key string, fields map[string]interface{}) error {
-	return c.client.HMSet(key, fields).Err()
+	return c.client.HMSet(c.setPrefix(key), fields).Err()
 }
 
 func (c *single) HSetNX(ctx context.Context, key, field string, value interface{}) bool {
-	return c.client.HSetNX(key, field, value).Val()
+	return c.client.HSetNX(c.setPrefix(key), field, value).Val()
 }
 
 func (c *single) HVals(ctx context.Context, key string) []string {
-	return c.client.HVals(key).Val()
+	return c.client.HVals(c.setPrefix(key)).Val()
 }
 
 func (c *single) BLPop(ctx context.Context, timeout time.Duration, keys ...string) []string {
@@ -293,43 +293,43 @@ func (c *single) BRPopLPush(ctx context.Context, source, destination string, tim
 }
 
 func (c *single) LIndex(ctx context.Context, key string, index int64) string {
-	return c.client.LIndex(key, index).Val()
+	return c.client.LIndex(c.setPrefix(key), index).Val()
 }
 
 func (c *single) LInsert(ctx context.Context, key, op string, pivot, value interface{}) int64 {
-	return c.client.LInsert(key, op, pivot, value).Val()
+	return c.client.LInsert(c.setPrefix(key), op, pivot, value).Val()
 }
 
 func (c *single) LInsertBefore(ctx context.Context, key string, pivot, value interface{}) int64 {
-	return c.client.LInsertBefore(key, pivot, value).Val()
+	return c.client.LInsertBefore(c.setPrefix(key), pivot, value).Val()
 }
 
 func (c *single) LInsertAfter(ctx context.Context, key string, pivot, value interface{}) int64 {
-	return c.client.LInsertAfter(key, pivot, value).Val()
+	return c.client.LInsertAfter(c.setPrefix(key), pivot, value).Val()
 }
 
 func (c *single) LPop(ctx context.Context, key string) string {
-	return c.client.LPop(key).Val()
+	return c.client.LPop(c.setPrefix(key)).Val()
 }
 
 func (c *single) LPushX(ctx context.Context, key string, value interface{}) int64 {
-	return c.client.LPushX(key, value).Val()
+	return c.client.LPushX(c.setPrefix(key), value).Val()
 }
 
 func (c *single) LRange(ctx context.Context, key string, start, stop int64) []string {
-	return c.client.LRange(key, start, stop).Val()
+	return c.client.LRange(c.setPrefix(key), start, stop).Val()
 }
 
 func (c *single) LRem(ctx context.Context, key string, count int64, value interface{}) int64 {
-	return c.client.LRem(key, count, value).Val()
+	return c.client.LRem(c.setPrefix(key), count, value).Val()
 }
 
 func (c *single) LSet(ctx context.Context, key string, index int64, value interface{}) error {
-	return c.client.LSet(key, index, value).Err()
+	return c.client.LSet(c.setPrefix(key), index, value).Err()
 }
 
 func (c *single) LTrim(ctx context.Context, key string, start, stop int64) error {
-	return c.client.LTrim(key, start, stop).Err()
+	return c.client.LTrim(c.setPrefix(key), start, stop).Err()
 }
 
 func (c *single) RPopLPush(ctx context.Context, source, destination string) string {
@@ -337,19 +337,19 @@ func (c *single) RPopLPush(ctx context.Context, source, destination string) stri
 }
 
 func (c *single) RPush(ctx context.Context, key string, values ...interface{}) int64 {
-	return c.client.RPush(key, values...).Val()
+	return c.client.RPush(c.setPrefix(key), values...).Val()
 }
 
 func (c *single) RPushX(ctx context.Context, key string, value interface{}) int64 {
-	return c.client.RPushX(key, value).Val()
+	return c.client.RPushX(c.setPrefix(key), value).Val()
 }
 
 func (c *single) SAdd(ctx context.Context, key string, members ...interface{}) int64 {
-	return c.client.SAdd(key, members...).Val()
+	return c.client.SAdd(c.setPrefix(key), members...).Val()
 }
 
 func (c *single) SCard(ctx context.Context, key string) int64 {
-	return c.client.SCard(key).Val()
+	return c.client.SCard(c.setPrefix(key)).Val()
 }
 
 func (c *single) SDiff(ctx context.Context, keys ...string) []string {
@@ -369,15 +369,15 @@ func (c *single) SInterStore(ctx context.Context, destination string, keys ...st
 }
 
 func (c *single) SIsMember(ctx context.Context, key string, member interface{}) bool {
-	return c.client.SIsMember(key, member).Val()
+	return c.client.SIsMember(c.setPrefix(key), member).Val()
 }
 
 func (c *single) SMembers(ctx context.Context, key string) []string {
-	return c.client.SMembers(key).Val()
+	return c.client.SMembers(c.setPrefix(key)).Val()
 }
 
 func (c *single) SMembersMap(ctx context.Context, key string) map[string]struct{} {
-	return c.client.SMembersMap(key).Val()
+	return c.client.SMembersMap(c.setPrefix(key)).Val()
 }
 
 func (c *single) SMove(ctx context.Context, source, destination string, member interface{}) bool {
@@ -385,23 +385,23 @@ func (c *single) SMove(ctx context.Context, source, destination string, member i
 }
 
 func (c *single) SPop(ctx context.Context, key string) string {
-	return c.client.SPop(key).Val()
+	return c.client.SPop(c.setPrefix(key)).Val()
 }
 
 func (c *single) SPopN(ctx context.Context, key string, count int64) []string {
-	return c.client.SPopN(key, count).Val()
+	return c.client.SPopN(c.setPrefix(key), count).Val()
 }
 
 func (c *single) SRandMember(ctx context.Context, key string) string {
-	return c.client.SRandMember(key).Val()
+	return c.client.SRandMember(c.setPrefix(key)).Val()
 }
 
 func (c *single) SRandMemberN(ctx context.Context, key string, count int64) []string {
-	return c.client.SRandMemberN(key, count).Val()
+	return c.client.SRandMemberN(c.setPrefix(key), count).Val()
 }
 
 func (c *single) SRem(ctx context.Context, key string, members ...interface{}) int64 {
-	return c.client.SRem(key, members...).Val()
+	return c.client.SRem(c.setPrefix(key), members...).Val()
 }
 
 func (c *single) SUnion(ctx context.Context, keys ...string) []string {
@@ -493,11 +493,11 @@ func (c *single) XClaimJustID(ctx context.Context, a *redis.XClaimArgs) []string
 }
 
 func (c *single) XTrim(ctx context.Context, key string, maxLen int64) int64 {
-	return c.client.XTrim(key, maxLen).Val()
+	return c.client.XTrim(c.setPrefix(key), maxLen).Val()
 }
 
 func (c *single) XTrimApprox(ctx context.Context, key string, maxLen int64) int64 {
-	return c.client.XTrimApprox(key, maxLen).Val()
+	return c.client.XTrimApprox(c.setPrefix(key), maxLen).Val()
 }
 
 func (c *single) BZPopMax(ctx context.Context, timeout time.Duration, keys ...string) redis.ZWithKey {
@@ -509,47 +509,47 @@ func (c *single) BZPopMin(timeout time.Duration, keys ...string) redis.ZWithKey 
 }
 
 func (c *single) ZAddNX(ctx context.Context, key string, members ...redis.Z) int64 {
-	return c.client.ZAddNX(key, members...).Val()
+	return c.client.ZAddNX(c.setPrefix(key), members...).Val()
 }
 
 func (c *single) ZAddXX(ctx context.Context, key string, members ...redis.Z) int64 {
-	return c.client.ZAddXX(key, members...).Val()
+	return c.client.ZAddXX(c.setPrefix(key), members...).Val()
 }
 
 func (c *single) ZAddCh(ctx context.Context, key string, members ...redis.Z) int64 {
-	return c.client.ZAddCh(key, members...).Val()
+	return c.client.ZAddCh(c.setPrefix(key), members...).Val()
 }
 
 func (c *single) ZAddNXCh(ctx context.Context, key string, members ...redis.Z) int64 {
-	return c.client.ZAddNXCh(key, members...).Val()
+	return c.client.ZAddNXCh(c.setPrefix(key), members...).Val()
 }
 
 func (c *single) ZAddXXCh(ctx context.Context, key string, members ...redis.Z) int64 {
-	return c.client.ZAddXXCh(key, members...).Val()
+	return c.client.ZAddXXCh(c.setPrefix(key), members...).Val()
 }
 
 func (c *single) ZIncr(ctx context.Context, key string, member redis.Z) float64 {
-	return c.client.ZIncr(key, member).Val()
+	return c.client.ZIncr(c.setPrefix(key), member).Val()
 }
 
 func (c *single) ZIncrNX(ctx context.Context, key string, member redis.Z) float64 {
-	return c.client.ZIncrNX(key, member).Val()
+	return c.client.ZIncrNX(c.setPrefix(key), member).Val()
 }
 
 func (c *single) ZIncrXX(ctx context.Context, key string, member redis.Z) float64 {
-	return c.client.ZIncrXX(key, member).Val()
+	return c.client.ZIncrXX(c.setPrefix(key), member).Val()
 }
 
 func (c *single) ZCount(ctx context.Context, key, min, max string) int64 {
-	return c.client.ZCount(key, min, max).Val()
+	return c.client.ZCount(c.setPrefix(key), min, max).Val()
 }
 
 func (c *single) ZLexCount(ctx context.Context, key, min, max string) int64 {
-	return c.client.ZLexCount(key, min, max).Val()
+	return c.client.ZLexCount(c.setPrefix(key), min, max).Val()
 }
 
 func (c *single) ZIncrBy(ctx context.Context, key string, increment float64, member string) float64 {
-	return c.client.ZIncrBy(key, increment, member).Val()
+	return c.client.ZIncrBy(c.setPrefix(key), increment, member).Val()
 }
 
 func (c *single) ZInterStore(ctx context.Context, destination string, store redis.ZStore, keys ...string) int64 {
@@ -557,75 +557,75 @@ func (c *single) ZInterStore(ctx context.Context, destination string, store redi
 }
 
 func (c *single) ZPopMax(ctx context.Context, key string, count ...int64) []redis.Z {
-	return c.client.ZPopMax(key, count...).Val()
+	return c.client.ZPopMax(c.setPrefix(key), count...).Val()
 }
 
 func (c *single) ZPopMin(ctx context.Context, key string, count ...int64) []redis.Z {
-	return c.client.ZPopMin(key, count...).Val()
+	return c.client.ZPopMin(c.setPrefix(key), count...).Val()
 }
 
 func (c *single) ZRange(ctx context.Context, key string, start, stop int64) []string {
-	return c.client.ZRange(key, start, stop).Val()
+	return c.client.ZRange(c.setPrefix(key), start, stop).Val()
 }
 
 func (c *single) ZRangeByScore(ctx context.Context, key string, opt redis.ZRangeBy) []string {
-	return c.client.ZRangeByScore(key, opt).Val()
+	return c.client.ZRangeByScore(c.setPrefix(key), opt).Val()
 }
 
 func (c *single) ZRangeByLex(ctx context.Context, key string, opt redis.ZRangeBy) []string {
-	return c.client.ZRangeByLex(key, opt).Val()
+	return c.client.ZRangeByLex(c.setPrefix(key), opt).Val()
 }
 
 func (c *single) ZRangeByScoreWithScores(ctx context.Context, key string, opt redis.ZRangeBy) []redis.Z {
-	return c.client.ZRangeByScoreWithScores(key, opt).Val()
+	return c.client.ZRangeByScoreWithScores(c.setPrefix(key), opt).Val()
 }
 
 func (c *single) ZRank(ctx context.Context, key, member string) (int64, error) {
-	return c.client.ZRank(key, member).Result()
+	return c.client.ZRank(c.setPrefix(c.setPrefix(key)), member).Result()
 }
 
 func (c *single) ZRem(ctx context.Context, key string, members ...interface{}) int64 {
-	return c.client.ZRem(key, members...).Val()
+	return c.client.ZRem(c.setPrefix(c.setPrefix(key)), members...).Val()
 }
 
 func (c *single) ZRemRangeByRank(ctx context.Context, key string, start, stop int64) (int64, error) {
-	return c.client.ZRemRangeByRank(key, start, stop).Result()
+	return c.client.ZRemRangeByRank(c.setPrefix(c.setPrefix(key)), start, stop).Result()
 }
 
 func (c *single) ZRemRangeByScore(ctx context.Context, key, min, max string) int64 {
-	return c.client.ZRemRangeByScore(key, min, max).Val()
+	return c.client.ZRemRangeByScore(c.setPrefix(c.setPrefix(key)), min, max).Val()
 }
 
 func (c *single) ZRemRangeByLex(ctx context.Context, key, min, max string) int64 {
-	return c.client.ZRemRangeByLex(key, min, max).Val()
+	return c.client.ZRemRangeByLex(c.setPrefix(c.setPrefix(key)), min, max).Val()
 }
 
 func (c *single) ZRevRange(ctx context.Context, key string, start, stop int64) []string {
-	return c.client.ZRevRange(key, start, stop).Val()
+	return c.client.ZRevRange(c.setPrefix(c.setPrefix(key)), start, stop).Val()
 }
 
 func (c *single) ZRevRangeWithScores(ctx context.Context, key string, start, stop int64) []redis.Z {
-	return c.client.ZRevRangeWithScores(key, start, stop).Val()
+	return c.client.ZRevRangeWithScores(c.setPrefix(c.setPrefix(key)), start, stop).Val()
 }
 
 func (c *single) ZRevRangeByScore(ctx context.Context, key string, opt redis.ZRangeBy) []string {
-	return c.client.ZRevRangeByScore(key, opt).Val()
+	return c.client.ZRevRangeByScore(c.setPrefix(c.setPrefix(key)), opt).Val()
 }
 
 func (c *single) ZRevRangeByLex(ctx context.Context, key string, opt redis.ZRangeBy) []string {
-	return c.client.ZRevRangeByLex(key, opt).Val()
+	return c.client.ZRevRangeByLex(c.setPrefix(c.setPrefix(key)), opt).Val()
 }
 
 func (c *single) ZRevRangeByScoreWithScores(ctx context.Context, key string, opt redis.ZRangeBy) []redis.Z {
-	return c.client.ZRevRangeByScoreWithScores(key, opt).Val()
+	return c.client.ZRevRangeByScoreWithScores(c.setPrefix(c.setPrefix(key)), opt).Val()
 }
 
 func (c *single) ZRevRank(ctx context.Context, key, member string) (int64, error) {
-	return c.client.ZRevRank(key, member).Result()
+	return c.client.ZRevRank(c.setPrefix(c.setPrefix(key)), member).Result()
 }
 
 func (c *single) ZScore(ctx context.Context, key, member string) float64 {
-	return c.client.ZScore(key, member).Val()
+	return c.client.ZScore(c.setPrefix(c.setPrefix(key)), member).Val()
 }
 
 func (c *single) ZUnionStore(ctx context.Context, dest string, store redis.ZStore, keys ...string) int64 {
@@ -633,7 +633,7 @@ func (c *single) ZUnionStore(ctx context.Context, dest string, store redis.ZStor
 }
 
 func (c *single) PFAdd(ctx context.Context, key string, els ...interface{}) int64 {
-	return c.client.PFAdd(key, els...).Val()
+	return c.client.PFAdd(c.setPrefix(c.setPrefix(key)), els...).Val()
 }
 
 func (c *single) PFCount(ctx context.Context, keys ...string) int64 {
@@ -765,7 +765,7 @@ func (c *single) ScriptLoad(ctx context.Context, script string) string {
 }
 
 func (c *single) DebugObject(ctx context.Context, key string) string {
-	return c.client.DebugObject(key).Val()
+	return c.client.DebugObject(c.setPrefix(c.setPrefix(key))).Val()
 }
 
 func (c *single) PubSubChannels(ctx context.Context, pattern string) []string {
@@ -813,7 +813,7 @@ func (c *single) ClusterInfo(ctx context.Context) string {
 }
 
 func (c *single) ClusterKeySlot(ctx context.Context, key string) int64 {
-	return c.client.ClusterKeySlot(key).Val()
+	return c.client.ClusterKeySlot(c.setPrefix(key)).Val()
 }
 
 func (c *single) ClusterGetKeysInSlot(ctx context.Context, slot int, count int) []string {
@@ -857,35 +857,35 @@ func (c *single) ClusterAddSlotsRange(ctx context.Context, min, max int) error {
 }
 
 func (c *single) GeoAdd(ctx context.Context, key string, geoLocation ...*redis.GeoLocation) int64 {
-	return c.client.GeoAdd(key, geoLocation...).Val()
+	return c.client.GeoAdd(c.setPrefix(key), geoLocation...).Val()
 }
 
 func (c *single) GeoPos(ctx context.Context, key string, members ...string) []*redis.GeoPos {
-	return c.client.GeoPos(key, members...).Val()
+	return c.client.GeoPos(c.setPrefix(key), members...).Val()
 }
 
 func (c *single) GeoRadius(ctx context.Context, key string, longitude, latitude float64, query *redis.GeoRadiusQuery) []redis.GeoLocation {
-	return c.client.GeoRadius(key, longitude, latitude, query).Val()
+	return c.client.GeoRadius(c.setPrefix(key), longitude, latitude, query).Val()
 }
 
 func (c *single) GeoRadiusRO(ctx context.Context, key string, longitude, latitude float64, query *redis.GeoRadiusQuery) []redis.GeoLocation {
-	return c.client.GeoRadiusRO(key, longitude, latitude, query).Val()
+	return c.client.GeoRadiusRO(c.setPrefix(key), longitude, latitude, query).Val()
 }
 
 func (c *single) GeoRadiusByMember(ctx context.Context, key, member string, query *redis.GeoRadiusQuery) []redis.GeoLocation {
-	return c.client.GeoRadiusByMember(key, member, query).Val()
+	return c.client.GeoRadiusByMember(c.setPrefix(key), member, query).Val()
 }
 
 func (c *single) GeoRadiusByMemberRO(ctx context.Context, key, member string, query *redis.GeoRadiusQuery) []redis.GeoLocation {
-	return c.client.GeoRadiusByMemberRO(key, member, query).Val()
+	return c.client.GeoRadiusByMemberRO(c.setPrefix(key), member, query).Val()
 }
 
 func (c *single) GeoDist(ctx context.Context, key string, member1, member2, unit string) float64 {
-	return c.client.GeoDist(key, member1, member2, unit).Val()
+	return c.client.GeoDist(c.setPrefix(key), member1, member2, unit).Val()
 }
 
 func (c *single) GeoHash(ctx context.Context, key string, members ...string) []string {
-	return c.client.GeoHash(key, members...).Val()
+	return c.client.GeoHash(c.setPrefix(key), members...).Val()
 }
 
 func (c *single) ReadOnly(ctx context.Context) error {
@@ -897,7 +897,7 @@ func (c *single) ReadWrite(ctx context.Context) error {
 }
 
 func (c *single) MemoryUsage(ctx context.Context, key string, samples ...int) int64 {
-	return c.client.MemoryUsage(key, samples...).Val()
+	return c.client.MemoryUsage(c.setPrefix(key), samples...).Val()
 }
 
 func (c *single) Ping(_ context.Context) error {
@@ -905,19 +905,19 @@ func (c *single) Ping(_ context.Context) error {
 }
 
 func (c *single) LPush(_ context.Context, key string, val interface{}) (err error) {
-	return c.client.LPush(key, val).Err()
+	return c.client.LPush(c.setPrefix(key), val).Err()
 }
 
 func (c *single) RPop(_ context.Context, key string) (res string, err error) {
-	return c.client.RPop(key).Result()
+	return c.client.RPop(c.setPrefix(key)).Result()
 }
 
 func (c *single) LLen(_ context.Context, key string) int64 {
-	return c.client.LLen(key).Val()
+	return c.client.LLen(c.setPrefix(key)).Val()
 }
 
 func (c *single) TypeOf(_ context.Context, key string) (res string, err error) {
-	return c.client.Type(key).Result()
+	return c.client.Type(c.setPrefix(key)).Result()
 }
 
 func (c *single) Keys(_ context.Context, pattern string) (res []string, err error) {
@@ -952,7 +952,7 @@ func (c *single) Exists(_ context.Context, keys ...string) int64 {
 }
 
 func (c *single) TTL(_ context.Context, key string) time.Duration {
-	return c.client.TTL(key).Val()
+	return c.client.TTL(c.setPrefix(key)).Val()
 }
 
 func NewRedisSingle(host, password, prefix string, db int) RedisClient {
@@ -1037,9 +1037,9 @@ func (c *single) Publish(_ context.Context, channel string, message interface{})
 
 func (c *single) Incr(_ context.Context, key string, expiration time.Duration) error {
 	defer func() {
-		c.client.Expire(c.setPrefix(key), expiration)
+		c.client.Expire(c.setPrefix(c.setPrefix(key)), expiration)
 	}()
-	return c.client.Incr(c.setPrefix(key)).Err()
+	return c.client.Incr(c.setPrefix(c.setPrefix(key))).Err()
 }
 
 func (c *single) SetPrefix(_ context.Context, prefix string) RedisClient {

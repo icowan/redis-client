@@ -21,6 +21,10 @@ type cluster struct {
 	prefix string
 }
 
+func (c *cluster) Incr(ctx context.Context, key string, exp time.Duration) error {
+	return c.client.Incr(c.setPrefix(key)).Err()
+}
+
 func (c *cluster) Pipeline(ctx context.Context) redis.Pipeliner {
 	return c.client.Pipeline()
 }
@@ -58,15 +62,15 @@ func (c *cluster) Unlink(ctx context.Context, keys ...string) int64 {
 }
 
 func (c *cluster) Dump(ctx context.Context, key string) string {
-	return c.client.Dump(key).Val()
+	return c.client.Dump(c.setPrefix(c.setPrefix(key))).Val()
 }
 
 func (c *cluster) Expire(ctx context.Context, key string, expiration time.Duration) bool {
-	return c.client.Expire(key, expiration).Val()
+	return c.client.Expire(c.setPrefix(c.setPrefix(key)), expiration).Val()
 }
 
 func (c *cluster) ExpireAt(ctx context.Context, key string, tm time.Time) bool {
-	return c.client.ExpireAt(key, tm).Val()
+	return c.client.ExpireAt(c.setPrefix(c.setPrefix(key)), tm).Val()
 }
 
 func (c *cluster) Migrate(ctx context.Context, host, port, key string, db int64, timeout time.Duration) error {
@@ -74,35 +78,35 @@ func (c *cluster) Migrate(ctx context.Context, host, port, key string, db int64,
 }
 
 func (c *cluster) Move(ctx context.Context, key string, db int64) bool {
-	return c.client.Move(key, db).Val()
+	return c.client.Move(c.setPrefix(c.setPrefix(key)), db).Val()
 }
 
 func (c *cluster) ObjectRefCount(ctx context.Context, key string) int64 {
-	return c.client.ObjectRefCount(key).Val()
+	return c.client.ObjectRefCount(c.setPrefix(c.setPrefix(key))).Val()
 }
 
 func (c *cluster) ObjectEncoding(ctx context.Context, key string) string {
-	return c.client.ObjectEncoding(key).Val()
+	return c.client.ObjectEncoding(c.setPrefix(c.setPrefix(key))).Val()
 }
 
 func (c *cluster) ObjectIdleTime(ctx context.Context, key string) time.Duration {
-	return c.client.ObjectIdleTime(key).Val()
+	return c.client.ObjectIdleTime(c.setPrefix(c.setPrefix(key))).Val()
 }
 
 func (c *cluster) Persist(ctx context.Context, key string) bool {
-	return c.client.Persist(key).Val()
+	return c.client.Persist(c.setPrefix(c.setPrefix(key))).Val()
 }
 
 func (c *cluster) PExpire(ctx context.Context, key string, expiration time.Duration) bool {
-	return c.client.PExpire(key, expiration).Val()
+	return c.client.PExpire(c.setPrefix(c.setPrefix(key)), expiration).Val()
 }
 
 func (c *cluster) PExpireAt(ctx context.Context, key string, tm time.Time) bool {
-	return c.client.PExpireAt(key, tm).Val()
+	return c.client.PExpireAt(c.setPrefix(c.setPrefix(key)), tm).Val()
 }
 
 func (c *cluster) PTTL(ctx context.Context, key string) time.Duration {
-	return c.client.PTTL(key).Val()
+	return c.client.PTTL(c.setPrefix(c.setPrefix(key))).Val()
 }
 
 func (c *cluster) RandomKey(ctx context.Context) string {
@@ -110,31 +114,31 @@ func (c *cluster) RandomKey(ctx context.Context) string {
 }
 
 func (c *cluster) Rename(ctx context.Context, key, newkey string) *redis.StatusCmd {
-	return c.client.Rename(key, newkey)
+	return c.client.Rename(c.setPrefix(c.setPrefix(key)), newkey)
 }
 
 func (c *cluster) RenameNX(ctx context.Context, key, newkey string) bool {
-	return c.client.RenameNX(key, newkey).Val()
+	return c.client.RenameNX(c.setPrefix(c.setPrefix(key)), newkey).Val()
 }
 
 func (c *cluster) Restore(ctx context.Context, key string, ttl time.Duration, value string) error {
-	return c.client.Restore(key, ttl, value).Err()
+	return c.client.Restore(c.setPrefix(c.setPrefix(key)), ttl, value).Err()
 }
 
 func (c *cluster) RestoreReplace(ctx context.Context, key string, ttl time.Duration, value string) error {
-	return c.client.RestoreReplace(key, ttl, value).Err()
+	return c.client.RestoreReplace(c.setPrefix(c.setPrefix(key)), ttl, value).Err()
 }
 
 func (c *cluster) Sort(ctx context.Context, key string, sort *redis.Sort) []string {
-	return c.client.Sort(key, sort).Val()
+	return c.client.Sort(c.setPrefix(key), sort).Val()
 }
 
 func (c *cluster) SortStore(ctx context.Context, key, store string, sort *redis.Sort) int64 {
-	return c.client.SortStore(key, store, sort).Val()
+	return c.client.SortStore(c.setPrefix(key), store, sort).Val()
 }
 
 func (c *cluster) SortInterfaces(ctx context.Context, key string, sort *redis.Sort) []interface{} {
-	return c.client.SortInterfaces(key, sort).Val()
+	return c.client.SortInterfaces(c.setPrefix(key), sort).Val()
 }
 
 func (c *cluster) Touch(ctx context.Context, keys ...string) int64 {
@@ -142,7 +146,7 @@ func (c *cluster) Touch(ctx context.Context, keys ...string) int64 {
 }
 
 func (c *cluster) Type(ctx context.Context, key string) string {
-	return c.client.Type(key).Val()
+	return c.client.Type(c.setPrefix(key)).Val()
 }
 
 func (c *cluster) Scan(ctx context.Context, cursor uint64, match string, count int64) ([]string, uint64) {
@@ -150,23 +154,23 @@ func (c *cluster) Scan(ctx context.Context, cursor uint64, match string, count i
 }
 
 func (c *cluster) SScan(ctx context.Context, key string, cursor uint64, match string, count int64) ([]string, uint64) {
-	return c.client.SScan(key, cursor, match, count).Val()
+	return c.client.SScan(c.setPrefix(key), cursor, match, count).Val()
 }
 
 func (c *cluster) HScan(ctx context.Context, key string, cursor uint64, match string, count int64) ([]string, uint64) {
-	return c.client.HScan(key, cursor, match, count).Val()
+	return c.client.HScan(c.setPrefix(key), cursor, match, count).Val()
 }
 
 func (c *cluster) ZScan(ctx context.Context, key string, cursor uint64, match string, count int64) ([]string, uint64) {
-	return c.client.ZScan(key, cursor, match, count).Val()
+	return c.client.ZScan(c.setPrefix(key), cursor, match, count).Val()
 }
 
 func (c *cluster) Append(ctx context.Context, key, value string) int64 {
-	return c.client.Append(key, value).Val()
+	return c.client.Append(c.setPrefix(key), value).Val()
 }
 
 func (c *cluster) BitCount(ctx context.Context, key string, bitCount *redis.BitCount) int64 {
-	return c.client.BitCount(key, bitCount).Val()
+	return c.client.BitCount(c.setPrefix(key), bitCount).Val()
 }
 
 func (c *cluster) BitOpAnd(ctx context.Context, destKey string, keys ...string) int64 {
@@ -186,35 +190,35 @@ func (c *cluster) BitOpNot(ctx context.Context, destKey string, key string) int6
 }
 
 func (c *cluster) BitPos(ctx context.Context, key string, bit int64, pos ...int64) int64 {
-	return c.client.BitPos(key, bit, pos...).Val()
+	return c.client.BitPos(c.setPrefix(key), bit, pos...).Val()
 }
 
 func (c *cluster) Decr(ctx context.Context, key string) int64 {
-	return c.client.Decr(key).Val()
+	return c.client.Decr(c.setPrefix(key)).Val()
 }
 
 func (c *cluster) DecrBy(ctx context.Context, key string, decrement int64) int64 {
-	return c.client.DecrBy(key, decrement).Val()
+	return c.client.DecrBy(c.setPrefix(key), decrement).Val()
 }
 
 func (c *cluster) GetBit(ctx context.Context, key string, offset int64) int64 {
-	return c.client.GetBit(key, offset).Val()
+	return c.client.GetBit(c.setPrefix(key), offset).Val()
 }
 
 func (c *cluster) GetRange(ctx context.Context, key string, start, end int64) string {
-	return c.client.GetRange(key, start, end).Val()
+	return c.client.GetRange(c.setPrefix(key), start, end).Val()
 }
 
 func (c *cluster) GetSet(ctx context.Context, key string, value interface{}) string {
-	return c.client.GetSet(key, value).Val()
+	return c.client.GetSet(c.setPrefix(key), value).Val()
 }
 
 func (c *cluster) IncrBy(ctx context.Context, key string, value int64) int64 {
-	return c.client.IncrBy(key, value).Val()
+	return c.client.IncrBy(c.setPrefix(key), value).Val()
 }
 
 func (c *cluster) IncrByFloat(ctx context.Context, key string, value float64) float64 {
-	return c.client.IncrByFloat(key, value).Val()
+	return c.client.IncrByFloat(c.setPrefix(key), value).Val()
 }
 
 func (c *cluster) MGet(ctx context.Context, keys ...string) []interface{} {
@@ -230,55 +234,55 @@ func (c *cluster) MSetNX(ctx context.Context, pairs ...interface{}) bool {
 }
 
 func (c *cluster) SetBit(ctx context.Context, key string, offset int64, value int) int64 {
-	return c.client.SetBit(key, offset, value).Val()
+	return c.client.SetBit(c.setPrefix(key), offset, value).Val()
 }
 
 func (c *cluster) SetNX(ctx context.Context, key string, value interface{}, expiration time.Duration) bool {
-	return c.client.SetNX(key, value, expiration).Val()
+	return c.client.SetNX(c.setPrefix(key), value, expiration).Val()
 }
 
 func (c *cluster) SetXX(ctx context.Context, key string, value interface{}, expiration time.Duration) bool {
-	return c.client.SetXX(key, value, expiration).Val()
+	return c.client.SetXX(c.setPrefix(key), value, expiration).Val()
 }
 
 func (c *cluster) SetRange(ctx context.Context, key string, offset int64, value string) int64 {
-	return c.client.SetRange(key, offset, value).Val()
+	return c.client.SetRange(c.setPrefix(key), offset, value).Val()
 }
 
 func (c *cluster) StrLen(ctx context.Context, key string) int64 {
-	return c.client.StrLen(key).Val()
+	return c.client.StrLen(c.setPrefix(key)).Val()
 }
 
 func (c *cluster) HExists(ctx context.Context, key, field string) bool {
-	return c.client.HExists(key, field).Val()
+	return c.client.HExists(c.setPrefix(key), field).Val()
 }
 
 func (c *cluster) HIncrBy(ctx context.Context, key, field string, incr int64) int64 {
-	return c.client.HIncrBy(key, field, incr).Val()
+	return c.client.HIncrBy(c.setPrefix(key), field, incr).Val()
 }
 
 func (c *cluster) HIncrByFloat(ctx context.Context, key, field string, incr float64) float64 {
-	return c.client.HIncrByFloat(key, field, incr).Val()
+	return c.client.HIncrByFloat(c.setPrefix(key), field, incr).Val()
 }
 
 func (c *cluster) HKeys(ctx context.Context, key string) []string {
-	return c.client.HKeys(key).Val()
+	return c.client.HKeys(c.setPrefix(key)).Val()
 }
 
 func (c *cluster) HMGet(ctx context.Context, key string, fields ...string) []interface{} {
-	return c.client.HMGet(key, fields...).Val()
+	return c.client.HMGet(c.setPrefix(key), fields...).Val()
 }
 
 func (c *cluster) HMSet(ctx context.Context, key string, fields map[string]interface{}) error {
-	return c.client.HMSet(key, fields).Err()
+	return c.client.HMSet(c.setPrefix(key), fields).Err()
 }
 
 func (c *cluster) HSetNX(ctx context.Context, key, field string, value interface{}) bool {
-	return c.client.HSetNX(key, field, value).Val()
+	return c.client.HSetNX(c.setPrefix(key), field, value).Val()
 }
 
 func (c *cluster) HVals(ctx context.Context, key string) []string {
-	return c.client.HVals(key).Val()
+	return c.client.HVals(c.setPrefix(key)).Val()
 }
 
 func (c *cluster) BLPop(ctx context.Context, timeout time.Duration, keys ...string) []string {
@@ -294,43 +298,43 @@ func (c *cluster) BRPopLPush(ctx context.Context, source, destination string, ti
 }
 
 func (c *cluster) LIndex(ctx context.Context, key string, index int64) string {
-	return c.client.LIndex(key, index).Val()
+	return c.client.LIndex(c.setPrefix(key), index).Val()
 }
 
 func (c *cluster) LInsert(ctx context.Context, key, op string, pivot, value interface{}) int64 {
-	return c.client.LInsert(key, op, pivot, value).Val()
+	return c.client.LInsert(c.setPrefix(key), op, pivot, value).Val()
 }
 
 func (c *cluster) LInsertBefore(ctx context.Context, key string, pivot, value interface{}) int64 {
-	return c.client.LInsertBefore(key, pivot, value).Val()
+	return c.client.LInsertBefore(c.setPrefix(key), pivot, value).Val()
 }
 
 func (c *cluster) LInsertAfter(ctx context.Context, key string, pivot, value interface{}) int64 {
-	return c.client.LInsertAfter(key, pivot, value).Val()
+	return c.client.LInsertAfter(c.setPrefix(key), pivot, value).Val()
 }
 
 func (c *cluster) LPop(ctx context.Context, key string) string {
-	return c.client.LPop(key).Val()
+	return c.client.LPop(c.setPrefix(key)).Val()
 }
 
 func (c *cluster) LPushX(ctx context.Context, key string, value interface{}) int64 {
-	return c.client.LPushX(key, value).Val()
+	return c.client.LPushX(c.setPrefix(key), value).Val()
 }
 
 func (c *cluster) LRange(ctx context.Context, key string, start, stop int64) []string {
-	return c.client.LRange(key, start, stop).Val()
+	return c.client.LRange(c.setPrefix(key), start, stop).Val()
 }
 
 func (c *cluster) LRem(ctx context.Context, key string, count int64, value interface{}) int64 {
-	return c.client.LRem(key, count, value).Val()
+	return c.client.LRem(c.setPrefix(key), count, value).Val()
 }
 
 func (c *cluster) LSet(ctx context.Context, key string, index int64, value interface{}) error {
-	return c.client.LSet(key, index, value).Err()
+	return c.client.LSet(c.setPrefix(key), index, value).Err()
 }
 
 func (c *cluster) LTrim(ctx context.Context, key string, start, stop int64) error {
-	return c.client.LTrim(key, start, stop).Err()
+	return c.client.LTrim(c.setPrefix(key), start, stop).Err()
 }
 
 func (c *cluster) RPopLPush(ctx context.Context, source, destination string) string {
@@ -338,19 +342,19 @@ func (c *cluster) RPopLPush(ctx context.Context, source, destination string) str
 }
 
 func (c *cluster) RPush(ctx context.Context, key string, values ...interface{}) int64 {
-	return c.client.RPush(key, values...).Val()
+	return c.client.RPush(c.setPrefix(key), values...).Val()
 }
 
 func (c *cluster) RPushX(ctx context.Context, key string, value interface{}) int64 {
-	return c.client.RPushX(key, value).Val()
+	return c.client.RPushX(c.setPrefix(key), value).Val()
 }
 
 func (c *cluster) SAdd(ctx context.Context, key string, members ...interface{}) int64 {
-	return c.client.SAdd(key, members...).Val()
+	return c.client.SAdd(c.setPrefix(key), members...).Val()
 }
 
 func (c *cluster) SCard(ctx context.Context, key string) int64 {
-	return c.client.SCard(key).Val()
+	return c.client.SCard(c.setPrefix(key)).Val()
 }
 
 func (c *cluster) SDiff(ctx context.Context, keys ...string) []string {
@@ -370,15 +374,15 @@ func (c *cluster) SInterStore(ctx context.Context, destination string, keys ...s
 }
 
 func (c *cluster) SIsMember(ctx context.Context, key string, member interface{}) bool {
-	return c.client.SIsMember(key, member).Val()
+	return c.client.SIsMember(c.setPrefix(key), member).Val()
 }
 
 func (c *cluster) SMembers(ctx context.Context, key string) []string {
-	return c.client.SMembers(key).Val()
+	return c.client.SMembers(c.setPrefix(key)).Val()
 }
 
 func (c *cluster) SMembersMap(ctx context.Context, key string) map[string]struct{} {
-	return c.client.SMembersMap(key).Val()
+	return c.client.SMembersMap(c.setPrefix(key)).Val()
 }
 
 func (c *cluster) SMove(ctx context.Context, source, destination string, member interface{}) bool {
@@ -386,23 +390,23 @@ func (c *cluster) SMove(ctx context.Context, source, destination string, member 
 }
 
 func (c *cluster) SPop(ctx context.Context, key string) string {
-	return c.client.SPop(key).Val()
+	return c.client.SPop(c.setPrefix(key)).Val()
 }
 
 func (c *cluster) SPopN(ctx context.Context, key string, count int64) []string {
-	return c.client.SPopN(key, count).Val()
+	return c.client.SPopN(c.setPrefix(key), count).Val()
 }
 
 func (c *cluster) SRandMember(ctx context.Context, key string) string {
-	return c.client.SRandMember(key).Val()
+	return c.client.SRandMember(c.setPrefix(key)).Val()
 }
 
 func (c *cluster) SRandMemberN(ctx context.Context, key string, count int64) []string {
-	return c.client.SRandMemberN(key, count).Val()
+	return c.client.SRandMemberN(c.setPrefix(key), count).Val()
 }
 
 func (c *cluster) SRem(ctx context.Context, key string, members ...interface{}) int64 {
-	return c.client.SRem(key, members...).Val()
+	return c.client.SRem(c.setPrefix(key), members...).Val()
 }
 
 func (c *cluster) SUnion(ctx context.Context, keys ...string) []string {
@@ -494,11 +498,11 @@ func (c *cluster) XClaimJustID(ctx context.Context, a *redis.XClaimArgs) []strin
 }
 
 func (c *cluster) XTrim(ctx context.Context, key string, maxLen int64) int64 {
-	return c.client.XTrim(key, maxLen).Val()
+	return c.client.XTrim(c.setPrefix(key), maxLen).Val()
 }
 
 func (c *cluster) XTrimApprox(ctx context.Context, key string, maxLen int64) int64 {
-	return c.client.XTrimApprox(key, maxLen).Val()
+	return c.client.XTrimApprox(c.setPrefix(key), maxLen).Val()
 }
 
 func (c *cluster) BZPopMax(ctx context.Context, timeout time.Duration, keys ...string) redis.ZWithKey {
@@ -510,47 +514,47 @@ func (c *cluster) BZPopMin(timeout time.Duration, keys ...string) redis.ZWithKey
 }
 
 func (c *cluster) ZAddNX(ctx context.Context, key string, members ...redis.Z) int64 {
-	return c.client.ZAddNX(key, members...).Val()
+	return c.client.ZAddNX(c.setPrefix(key), members...).Val()
 }
 
 func (c *cluster) ZAddXX(ctx context.Context, key string, members ...redis.Z) int64 {
-	return c.client.ZAddXX(key, members...).Val()
+	return c.client.ZAddXX(c.setPrefix(key), members...).Val()
 }
 
 func (c *cluster) ZAddCh(ctx context.Context, key string, members ...redis.Z) int64 {
-	return c.client.ZAddCh(key, members...).Val()
+	return c.client.ZAddCh(c.setPrefix(key), members...).Val()
 }
 
 func (c *cluster) ZAddNXCh(ctx context.Context, key string, members ...redis.Z) int64 {
-	return c.client.ZAddNXCh(key, members...).Val()
+	return c.client.ZAddNXCh(c.setPrefix(key), members...).Val()
 }
 
 func (c *cluster) ZAddXXCh(ctx context.Context, key string, members ...redis.Z) int64 {
-	return c.client.ZAddXXCh(key, members...).Val()
+	return c.client.ZAddXXCh(c.setPrefix(key), members...).Val()
 }
 
 func (c *cluster) ZIncr(ctx context.Context, key string, member redis.Z) float64 {
-	return c.client.ZIncr(key, member).Val()
+	return c.client.ZIncr(c.setPrefix(key), member).Val()
 }
 
 func (c *cluster) ZIncrNX(ctx context.Context, key string, member redis.Z) float64 {
-	return c.client.ZIncrNX(key, member).Val()
+	return c.client.ZIncrNX(c.setPrefix(key), member).Val()
 }
 
 func (c *cluster) ZIncrXX(ctx context.Context, key string, member redis.Z) float64 {
-	return c.client.ZIncrXX(key, member).Val()
+	return c.client.ZIncrXX(c.setPrefix(key), member).Val()
 }
 
 func (c *cluster) ZCount(ctx context.Context, key, min, max string) int64 {
-	return c.client.ZCount(key, min, max).Val()
+	return c.client.ZCount(c.setPrefix(key), min, max).Val()
 }
 
 func (c *cluster) ZLexCount(ctx context.Context, key, min, max string) int64 {
-	return c.client.ZLexCount(key, min, max).Val()
+	return c.client.ZLexCount(c.setPrefix(key), min, max).Val()
 }
 
 func (c *cluster) ZIncrBy(ctx context.Context, key string, increment float64, member string) float64 {
-	return c.client.ZIncrBy(key, increment, member).Val()
+	return c.client.ZIncrBy(c.setPrefix(key), increment, member).Val()
 }
 
 func (c *cluster) ZInterStore(ctx context.Context, destination string, store redis.ZStore, keys ...string) int64 {
@@ -558,75 +562,75 @@ func (c *cluster) ZInterStore(ctx context.Context, destination string, store red
 }
 
 func (c *cluster) ZPopMax(ctx context.Context, key string, count ...int64) []redis.Z {
-	return c.client.ZPopMax(key, count...).Val()
+	return c.client.ZPopMax(c.setPrefix(key), count...).Val()
 }
 
 func (c *cluster) ZPopMin(ctx context.Context, key string, count ...int64) []redis.Z {
-	return c.client.ZPopMin(key, count...).Val()
+	return c.client.ZPopMin(c.setPrefix(key), count...).Val()
 }
 
 func (c *cluster) ZRange(ctx context.Context, key string, start, stop int64) []string {
-	return c.client.ZRange(key, start, stop).Val()
+	return c.client.ZRange(c.setPrefix(key), start, stop).Val()
 }
 
 func (c *cluster) ZRangeByScore(ctx context.Context, key string, opt redis.ZRangeBy) []string {
-	return c.client.ZRangeByScore(key, opt).Val()
+	return c.client.ZRangeByScore(c.setPrefix(key), opt).Val()
 }
 
 func (c *cluster) ZRangeByLex(ctx context.Context, key string, opt redis.ZRangeBy) []string {
-	return c.client.ZRangeByLex(key, opt).Val()
+	return c.client.ZRangeByLex(c.setPrefix(key), opt).Val()
 }
 
 func (c *cluster) ZRangeByScoreWithScores(ctx context.Context, key string, opt redis.ZRangeBy) []redis.Z {
-	return c.client.ZRangeByScoreWithScores(key, opt).Val()
+	return c.client.ZRangeByScoreWithScores(c.setPrefix(key), opt).Val()
 }
 
 func (c *cluster) ZRank(ctx context.Context, key, member string) (int64, error) {
-	return c.client.ZRank(key, member).Result()
+	return c.client.ZRank(c.setPrefix(c.setPrefix(key)), member).Result()
 }
 
 func (c *cluster) ZRem(ctx context.Context, key string, members ...interface{}) int64 {
-	return c.client.ZRem(key, members...).Val()
+	return c.client.ZRem(c.setPrefix(c.setPrefix(key)), members...).Val()
 }
 
 func (c *cluster) ZRemRangeByRank(ctx context.Context, key string, start, stop int64) (int64, error) {
-	return c.client.ZRemRangeByRank(key, start, stop).Result()
+	return c.client.ZRemRangeByRank(c.setPrefix(c.setPrefix(key)), start, stop).Result()
 }
 
 func (c *cluster) ZRemRangeByScore(ctx context.Context, key, min, max string) int64 {
-	return c.client.ZRemRangeByScore(key, min, max).Val()
+	return c.client.ZRemRangeByScore(c.setPrefix(c.setPrefix(key)), min, max).Val()
 }
 
 func (c *cluster) ZRemRangeByLex(ctx context.Context, key, min, max string) int64 {
-	return c.client.ZRemRangeByLex(key, min, max).Val()
+	return c.client.ZRemRangeByLex(c.setPrefix(c.setPrefix(key)), min, max).Val()
 }
 
 func (c *cluster) ZRevRange(ctx context.Context, key string, start, stop int64) []string {
-	return c.client.ZRevRange(key, start, stop).Val()
+	return c.client.ZRevRange(c.setPrefix(c.setPrefix(key)), start, stop).Val()
 }
 
 func (c *cluster) ZRevRangeWithScores(ctx context.Context, key string, start, stop int64) []redis.Z {
-	return c.client.ZRevRangeWithScores(key, start, stop).Val()
+	return c.client.ZRevRangeWithScores(c.setPrefix(c.setPrefix(key)), start, stop).Val()
 }
 
 func (c *cluster) ZRevRangeByScore(ctx context.Context, key string, opt redis.ZRangeBy) []string {
-	return c.client.ZRevRangeByScore(key, opt).Val()
+	return c.client.ZRevRangeByScore(c.setPrefix(c.setPrefix(key)), opt).Val()
 }
 
 func (c *cluster) ZRevRangeByLex(ctx context.Context, key string, opt redis.ZRangeBy) []string {
-	return c.client.ZRevRangeByLex(key, opt).Val()
+	return c.client.ZRevRangeByLex(c.setPrefix(c.setPrefix(key)), opt).Val()
 }
 
 func (c *cluster) ZRevRangeByScoreWithScores(ctx context.Context, key string, opt redis.ZRangeBy) []redis.Z {
-	return c.client.ZRevRangeByScoreWithScores(key, opt).Val()
+	return c.client.ZRevRangeByScoreWithScores(c.setPrefix(c.setPrefix(key)), opt).Val()
 }
 
 func (c *cluster) ZRevRank(ctx context.Context, key, member string) (int64, error) {
-	return c.client.ZRevRank(key, member).Result()
+	return c.client.ZRevRank(c.setPrefix(c.setPrefix(key)), member).Result()
 }
 
 func (c *cluster) ZScore(ctx context.Context, key, member string) float64 {
-	return c.client.ZScore(key, member).Val()
+	return c.client.ZScore(c.setPrefix(c.setPrefix(key)), member).Val()
 }
 
 func (c *cluster) ZUnionStore(ctx context.Context, dest string, store redis.ZStore, keys ...string) int64 {
@@ -634,7 +638,7 @@ func (c *cluster) ZUnionStore(ctx context.Context, dest string, store redis.ZSto
 }
 
 func (c *cluster) PFAdd(ctx context.Context, key string, els ...interface{}) int64 {
-	return c.client.PFAdd(key, els...).Val()
+	return c.client.PFAdd(c.setPrefix(c.setPrefix(key)), els...).Val()
 }
 
 func (c *cluster) PFCount(ctx context.Context, keys ...string) int64 {
@@ -766,7 +770,7 @@ func (c *cluster) ScriptLoad(ctx context.Context, script string) string {
 }
 
 func (c *cluster) DebugObject(ctx context.Context, key string) string {
-	return c.client.DebugObject(key).Val()
+	return c.client.DebugObject(c.setPrefix(c.setPrefix(key))).Val()
 }
 
 func (c *cluster) PubSubChannels(ctx context.Context, pattern string) []string {
@@ -814,7 +818,7 @@ func (c *cluster) ClusterInfo(ctx context.Context) string {
 }
 
 func (c *cluster) ClusterKeySlot(ctx context.Context, key string) int64 {
-	return c.client.ClusterKeySlot(key).Val()
+	return c.client.ClusterKeySlot(c.setPrefix(key)).Val()
 }
 
 func (c *cluster) ClusterGetKeysInSlot(ctx context.Context, slot int, count int) []string {
@@ -858,35 +862,35 @@ func (c *cluster) ClusterAddSlotsRange(ctx context.Context, min, max int) error 
 }
 
 func (c *cluster) GeoAdd(ctx context.Context, key string, geoLocation ...*redis.GeoLocation) int64 {
-	return c.client.GeoAdd(key, geoLocation...).Val()
+	return c.client.GeoAdd(c.setPrefix(key), geoLocation...).Val()
 }
 
 func (c *cluster) GeoPos(ctx context.Context, key string, members ...string) []*redis.GeoPos {
-	return c.client.GeoPos(key, members...).Val()
+	return c.client.GeoPos(c.setPrefix(key), members...).Val()
 }
 
 func (c *cluster) GeoRadius(ctx context.Context, key string, longitude, latitude float64, query *redis.GeoRadiusQuery) []redis.GeoLocation {
-	return c.client.GeoRadius(key, longitude, latitude, query).Val()
+	return c.client.GeoRadius(c.setPrefix(key), longitude, latitude, query).Val()
 }
 
 func (c *cluster) GeoRadiusRO(ctx context.Context, key string, longitude, latitude float64, query *redis.GeoRadiusQuery) []redis.GeoLocation {
-	return c.client.GeoRadiusRO(key, longitude, latitude, query).Val()
+	return c.client.GeoRadiusRO(c.setPrefix(key), longitude, latitude, query).Val()
 }
 
 func (c *cluster) GeoRadiusByMember(ctx context.Context, key, member string, query *redis.GeoRadiusQuery) []redis.GeoLocation {
-	return c.client.GeoRadiusByMember(key, member, query).Val()
+	return c.client.GeoRadiusByMember(c.setPrefix(key), member, query).Val()
 }
 
 func (c *cluster) GeoRadiusByMemberRO(ctx context.Context, key, member string, query *redis.GeoRadiusQuery) []redis.GeoLocation {
-	return c.client.GeoRadiusByMemberRO(key, member, query).Val()
+	return c.client.GeoRadiusByMemberRO(c.setPrefix(key), member, query).Val()
 }
 
 func (c *cluster) GeoDist(ctx context.Context, key string, member1, member2, unit string) float64 {
-	return c.client.GeoDist(key, member1, member2, unit).Val()
+	return c.client.GeoDist(c.setPrefix(key), member1, member2, unit).Val()
 }
 
 func (c *cluster) GeoHash(ctx context.Context, key string, members ...string) []string {
-	return c.client.GeoHash(key, members...).Val()
+	return c.client.GeoHash(c.setPrefix(key), members...).Val()
 }
 
 func (c *cluster) ReadOnly(ctx context.Context) error {
@@ -898,7 +902,7 @@ func (c *cluster) ReadWrite(ctx context.Context) error {
 }
 
 func (c *cluster) MemoryUsage(ctx context.Context, key string, samples ...int) int64 {
-	return c.client.MemoryUsage(key, samples...).Val()
+	return c.client.MemoryUsage(c.setPrefix(key), samples...).Val()
 }
 
 func (c *cluster) Ping(_ context.Context) error {
@@ -906,19 +910,19 @@ func (c *cluster) Ping(_ context.Context) error {
 }
 
 func (c *cluster) LPush(_ context.Context, key string, val interface{}) (err error) {
-	return c.client.LPush(key, val).Err()
+	return c.client.LPush(c.setPrefix(key), val).Err()
 }
 
 func (c *cluster) RPop(_ context.Context, key string) (res string, err error) {
-	return c.client.RPop(key).Result()
+	return c.client.RPop(c.setPrefix(key)).Result()
 }
 
 func (c *cluster) LLen(_ context.Context, key string) int64 {
-	return c.client.LLen(key).Val()
+	return c.client.LLen(c.setPrefix(key)).Val()
 }
 
 func (c *cluster) TypeOf(_ context.Context, key string) (res string, err error) {
-	return c.client.Type(key).Result()
+	return c.client.Type(c.setPrefix(key)).Result()
 }
 
 func (c *cluster) Keys(_ context.Context, pattern string) (res []string, err error) {
@@ -932,12 +936,12 @@ func (c *cluster) ZAdd(_ context.Context, k string, score float64, member interf
 	}).Err()
 }
 
-func (c *cluster) ZRangeWithScores(_ context.Context, k string, start, stop int64) (res []redis.Z, err error) {
-	return c.client.ZRangeWithScores(c.setPrefix(k), start, stop).Result()
-}
-
 func (c *cluster) ZCard(_ context.Context, k string) (res int64, err error) {
 	return c.client.ZCard(c.setPrefix(k)).Result()
+}
+
+func (c *cluster) ZRangeWithScores(_ context.Context, k string, start, stop int64) (res []redis.Z, err error) {
+	return c.client.ZRangeWithScores(c.setPrefix(k), start, stop).Result()
 }
 
 func (c *cluster) HLen(_ context.Context, k string) (res int64, err error) {
@@ -946,13 +950,6 @@ func (c *cluster) HLen(_ context.Context, k string) (res int64, err error) {
 
 func (c *cluster) HGetAll(_ context.Context, k string) (res map[string]string, err error) {
 	return c.client.HGetAll(c.setPrefix(k)).Result()
-}
-
-func (c *cluster) Incr(_ context.Context, key string, exp time.Duration) error {
-	defer func() {
-		c.client.Expire(c.setPrefix(key), exp)
-	}()
-	return c.client.Incr(c.setPrefix(key)).Err()
 }
 
 func NewRedisCluster(hosts []string, password, prefix string) RedisClient {
