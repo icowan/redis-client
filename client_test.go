@@ -10,6 +10,11 @@ package redisclient
 import (
 	"context"
 	"fmt"
+	"github.com/opentracing/opentracing-go"
+	"github.com/uber/jaeger-client-go"
+	jaegerConfig "github.com/uber/jaeger-client-go/config"
+	"github.com/uber/jaeger-lib/metrics/prometheus"
+	"io"
 	"testing"
 	"time"
 )
@@ -19,47 +24,37 @@ var (
 )
 
 func TestNewRedisClient(t *testing.T) {
-	rds, err := NewRedisClient("127.0.0.1:6379", "admin", "", 1)
+	tracer, _, _ := newJaegerTracer()
+	ctx = context.Background()
+	rds, err := NewRedisClient("127.0.0.1:32768", "", "rds", 1, tracer)
 	if err != nil {
+		fmt.Println("ping......", err)
 		t.Error(err)
 	}
-	defer func() {
-		_ = rds.Close(ctx)
-	}()
-
-	_ = rds.Set(ctx, "hello", "world", time.Second*10)
-	v, err := rds.Get(ctx, "hello")
-	if err != nil {
-		t.Error(err)
-	}
-
+	err = rds.Set(ctx, "hello", "world", time.Second*50).Err()
+	v := rds.Get(ctx, "hello").Val()
 	t.Log(v)
 }
 
-func TestNewRedisCluster(t *testing.T) {
-	ctx = context.Background()
-	rds, err := NewRedisClient("localhost:30738", "admin", "test", 3)
+// 使用jaeger
+func newJaegerTracer() (tracer opentracing.Tracer, closer io.Closer, err error) {
+	cfg := &jaegerConfig.Configuration{
+		Sampler: &jaegerConfig.SamplerConfig{
+			Type:  "const", //固定采样
+			Param: 1,       //1=全采样、0=不采样
+		},
+		Reporter: &jaegerConfig.ReporterConfig{
+			//QueueSize:          200, // 缓冲区越大内存消耗越大,默认100
+			LogSpans:           true,
+			LocalAgentHostPort: "",
+		},
+		ServiceName: fmt.Sprintf("%s.%s", "redis", "client"),
+	}
+	metricsFactory := prometheus.New()
+	tracer, closer, err = cfg.NewTracer(jaegerConfig.Logger(jaeger.StdLogger), jaegerConfig.Metrics(metricsFactory))
 	if err != nil {
-		t.Error(err)
+		return
 	}
-	defer func() {
-		_ = rds.Close(ctx)
-	}()
-
-	_ = rds.Set(ctx, "hello", "world", time.Second*10)
-	v, err := rds.Get(ctx, "hello")
-	if err != nil {
-		t.Error(err)
-	}
-
-	if err = rds.ZAdd(ctx, "hello", 100, "world"); err != nil {
-		t.Error(err)
-	}
-	rank, err := rds.ZRank(ctx, "hello", "world")
-	if err != nil {
-		t.Error(err)
-	}
-	fmt.Println(rank)
-
-	t.Log(v)
+	opentracing.SetGlobalTracer(tracer)
+	return
 }
