@@ -9,7 +9,6 @@ package redisclient
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
@@ -33,7 +32,6 @@ func (s prefixHook) BeforeProcess(ctx context.Context, cmd redis.Cmder) (context
 	if len(cmd.Args()) > 1 && reflect.TypeOf(cmd.Args()[1]).Kind() == reflect.String {
 		cmd.Args()[1] = s.prefixFn(cmd.Args()[1].(string))
 	}
-	fmt.Println(cmd.Args())
 	return ctx, nil
 }
 
