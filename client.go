@@ -19,6 +19,9 @@ import (
 
 func NewRedisClient(hosts, password, prefix string, db int, stdTracer opentracing.Tracer) (rdb redis.Cmdable, err error) {
 	prefixFn := func(key string) string {
+		if strings.EqualFold(prefix, "") {
+			return key
+		}
 		prefix = strings.Trim(prefix, ":")
 		key = strings.Trim(key, ":")
 		return fmt.Sprintf("%s:%s", prefix, key)
