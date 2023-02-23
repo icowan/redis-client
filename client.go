@@ -17,7 +17,7 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
-func NewRedisClient(hosts, password, prefix string, db int, stdTracer opentracing.Tracer) (rdb redis.Cmdable, err error) {
+func NewRedisClient(hosts, password, prefix string, db int, stdTracer opentracing.Tracer) (rdb redis.UniversalClient, err error) {
 	prefixFn := func(key string) string {
 		if strings.EqualFold(prefix, "") {
 			return key
@@ -27,30 +27,20 @@ func NewRedisClient(hosts, password, prefix string, db int, stdTracer opentracin
 		return fmt.Sprintf("%s:%s", prefix, key)
 	}
 	h := strings.Split(hosts, ",")
-	if len(h) > 1 {
-		client := redis.NewClusterClient(&redis.ClusterOptions{
-			Addrs:        h,
-			Password:     password,
-			DialTimeout:  time.Second * 15,
-			ReadTimeout:  time.Second * 15,
-			WriteTimeout: time.Second * 15,
-		})
-		if stdTracer != nil {
-			client.AddHook(newPrefixHook(prefixFn, stdTracer))
-		}
-		rdb = client
-	} else {
-		client := redis.NewClient(&redis.Options{
-			Addr:     hosts,
-			Password: password, // no password set
-			DB:       db,       // use default DB
-		})
-		if stdTracer != nil {
-			client.AddHook(newPrefixHook(prefixFn, stdTracer))
-		}
-		rdb = client
+	rdb = redis.NewUniversalClient(&redis.UniversalOptions{
+		Addrs:            h,
+		Password:         password,
+		DB:               db,
+		DialTimeout:      time.Second * 15,
+		ReadTimeout:      time.Second * 15,
+		WriteTimeout:     time.Second * 15,
+		MasterName:       "",
+		SentinelUsername: "",
+		SentinelPassword: "",
+	})
+	if stdTracer != nil {
+		rdb.AddHook(newPrefixHook(prefixFn, stdTracer))
 	}
-
 	if err = rdb.Ping(context.Background()).Err(); err != nil {
 		return nil, err
 	}
