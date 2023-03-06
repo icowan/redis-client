@@ -9,15 +9,28 @@ package redisclient
 
 import (
 	"context"
-	"github.com/go-redis/redis/v8"
+	"reflect"
+
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
-	"reflect"
+	"github.com/redis/go-redis/v9"
 )
 
 type prefixHook struct {
 	prefixFn func(key string) string
 	tracer   opentracing.Tracer
+}
+
+func (s prefixHook) DialHook(next redis.DialHook) redis.DialHook {
+	return next
+}
+
+func (s prefixHook) ProcessHook(next redis.ProcessHook) redis.ProcessHook {
+	return next
+}
+
+func (s prefixHook) ProcessPipelineHook(next redis.ProcessPipelineHook) redis.ProcessPipelineHook {
+	return next
 }
 
 func (s prefixHook) BeforeProcess(ctx context.Context, cmd redis.Cmder) (context.Context, error) {
