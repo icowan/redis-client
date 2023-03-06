@@ -10,11 +10,10 @@ package redisclient
 import (
 	"context"
 	"fmt"
+	"github.com/go-redis/redis/v8"
 	"github.com/opentracing/opentracing-go"
 	"strings"
 	"time"
-
-	"github.com/go-redis/redis/v8"
 )
 
 func NewRedisClient(hosts, password, prefix string, db int, stdTracer opentracing.Tracer) (rdb redis.UniversalClient, err error) {
